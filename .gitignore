@@ -1,7 +1,6 @@
 # Data
 !data/df_get_for_train_WMO_202103112139.parquet.gzip
-*.parquet
-*.parquet.gzip
+
 *.csv
 
 # Model
