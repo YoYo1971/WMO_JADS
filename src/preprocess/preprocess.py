@@ -11,7 +11,7 @@ def get_and_combine_cbs_tables(dict_tables, double_trouble_colnames=None, url='o
         Dictionary with as key the period and as value the table name
     double_trouble_colnames : dict(str: str)
         double_trouble_colnames: Dictionary with columnnames that will cause trouble if the suffix is deleted
-    url: str
+    url : str
         URL of the catalog of the CBS databases, i.e.: 'opendata.cbs.nl'
 
     Returns

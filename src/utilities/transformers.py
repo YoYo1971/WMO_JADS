@@ -10,19 +10,28 @@ class RelativeColumnScaler(BaseEstimator, TransformerMixin):
 
     def __init__(self, dict_relatively_cols=None):
         """
-        :param dict(str:list[str]) dict_relatively_cols: Dictionary with the base column as key and as a value a list with one
-                                                         or more columnsnames that need to be transformed.
+        Parameters
+        ----------
+        dict_relatively_cols : dict(str:list[str])
+            Dictionary with the base column as key and as a value a list with one or more columnsnames that need to
+            be transformed.
         """
+
         self.dict_relatively_cols = dict_relatively_cols
 
     def fit(self, X, y=None):
         """
         Standard fit method of transformer (selects all columns in columns arg is None)
+        Parameters
+        ----------
+        X : pd.DataFrame
+            Enables a DataFrame as input
+        y : pd.Series
+            Enables a target as input
 
-        :param pd.DataFrame X: Enables a DataFrame as input
-        :param pd.Series y: Enables a target as input
-
-        :return: return object itself
+        Returns
+        -------
+        return object itself
         """
         # nothing to fit here people, move along
 
@@ -31,11 +40,16 @@ class RelativeColumnScaler(BaseEstimator, TransformerMixin):
     def transform(self, X) -> Union[pd.DataFrame, pd.Series]:
         """
         Standard transform method of transformer which scales the columns based on a base column.
+        Parameters
+        ----------
+        X : pd.DataFrame
+            DataFrame to select and transform columns from
 
-        :param (pd.DataFrame) X: DataFrame to select and transform columns from
-
-        :return: pd.DataFrame or pd.Series containing only the selected columns
+        Returns
+        -------
+        pd.DataFrame or pd.Series containing only the selected columns
         """
+
         assert isinstance(X, pd.DataFrame)
         X_rel_cols = X.copy()
         try:
@@ -60,9 +74,14 @@ class CustomScaler(BaseEstimator, TransformerMixin):
     def __init__(self, cols, scaler):
         """
 
-        :param list[str] cols: List of columns to be selected.
-        :param scaler: Scaler to apply, i.e. MinMaxScaler() from sklearn
+        Parameters
+        ----------
+        cols : list[str]
+            List of columns to be selected.
+        scaler : Scaler
+            Scaler to apply, i.e. MinMaxScaler() from sklearn
         """
+
         self.cols = cols
         self.scaler = scaler
 
@@ -70,9 +89,16 @@ class CustomScaler(BaseEstimator, TransformerMixin):
         """
         Standard fit method of transformer which fits the scaler to X
 
-        :param pd.DataFrame X: DataFrame with the feature columns, including the column(s) to scale
-        :param pd.Series y: Default None, not used in fit. The target values in a model
-        :return: Fitted scaler for the selected column(s)
+        Parameters
+        ----------
+        X : pd.DataFrame
+            DataFrame with the feature columns, including the column(s) to scale
+        y : pd.Series
+            Default None, not used in fit. The target values in a model
+
+        Returns
+        -------
+        Fitted scaler for the selected column(s)
         """
 
         self.cols = [c for c in self.cols if c in X.columns]
@@ -85,8 +111,14 @@ class CustomScaler(BaseEstimator, TransformerMixin):
         Standard transform method of transformer which transforms the dataset with a scaler for the
         selected column(s)
 
-        :param pd.DataFrame X: DataFrame with the feature columns, including the categorical column(s)
-        :return: Transformed dataset X (with scaler as defined) for the selected column(s)
+        Parameters
+        ----------
+        X : pd.DataFrame
+            DataFrame with the feature columns, including the categorical column(s)
+
+        Returns
+        -------
+        Transformed dataset X (with scaler as defined) for the selected column(s)
         """
 
         X = X.copy()
@@ -102,18 +134,31 @@ class ColumnSelector(BaseEstimator, TransformerMixin):
 
     def __init__(self, cols=None):
         """
-        :param list[str] cols: List of columns to be selected.
+
+        Parameters
+        ----------
+        cols : list[str]
+            List of columns to be selected.
         """
+
         self.cols = cols
 
     def fit(self, X, y=None):
         """
         Standard fit method of transformer (selects all columns in columns arg is None)
 
-        :param pd.DataFrame X: Enables a DataFrame as input
-        :param pd.Series y: Enables a target as input
-        :return: return object itself
+        Parameters
+        ----------
+        X : pd.DataFrame
+            Enables a DataFrame as input
+        y : pd.Series
+            Enables a target as input
+
+        Returns
+        -------
+        return object itself
         """
+
         if self.cols is None:
             self.cols = list(X.columns)
 
@@ -123,9 +168,16 @@ class ColumnSelector(BaseEstimator, TransformerMixin):
         """
         Standard transform method of transformer which selects the correct columns (self.columns==None => passthrough))
 
-        :param (pd.DataFrame) df: DataFrame to select columns from
-        :return: DataFrame or Series containing only the selected columns
+        Parameters
+        ----------
+        X : pd.DataFrame
+            DataFrame to select columns from
+
+        Returns
+        -------
+        DataFrame or Series containing only the selected columns
         """
+
         assert isinstance(X, pd.DataFrame)
 
         try:
