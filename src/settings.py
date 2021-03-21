@@ -9,9 +9,9 @@ WMO_TABLES = {'2020': '84908NED',
 WIJK_TABLES = {'2020': '84799NED',
                '2019': '84583NED',
                '2018': '84286NED',
-               '2017': '83765NED'}#, # 2016 and 2015 not in other dataset
-               # '2016': '83487NED',
-               # '2015': '83220NED'}
+               '2017': '83765NED', # 2016 and 2015 not in other dataset
+               '2016': '83487NED',
+               '2015': '83220NED'}
 # Dictionary with columns that need to be renamed to avoid duplicates for neighbourhood data
 DOUBLETROUBLECOLNAMES_WIJK = {'GemiddeldElektriciteitsverbruikTotaal_47': 'GemiddeldElektriciteitsverbruikTotaal_47',
                               'Appartement_48': 'GemElectriciteitsverbruikAppartement_48',

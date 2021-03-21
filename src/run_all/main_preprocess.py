@@ -38,6 +38,7 @@ def load_data(region='gemeente'):
     df_wmo_total = get_region_period_spec_val_subtable(df=df_wmo_sub, region=region, period="halfjaar",
                                                        col='typemaatwerkarrangement',
                                                        spec_value='Hulp bij het huishouden')
+    df_wmo_total['codering_regio'] = df_wmo_total['codering_regio'].str.strip()
     # df_wmo_total = downcast_variables_dataframe(df_wmo_total)
     df_wmo_total = df_wmo_total.set_index(['codering_regio', 'interval'])
     df_wmo_total['periodennum'] = (df_wmo_total['perioden'].str[-4:] + str(0) + df_wmo_total['perioden'].str[:1])
@@ -69,22 +70,23 @@ def load_data(region='gemeente'):
     # df_wijk_total = downcast_variables_dataframe(df_wijk_total)
     df_wijk_total = df_wijk_total.set_index(['codering_regio', 'interval'])
 
-    # # Get data of position in households
-    # print("Get 'Bevolkings' data")
-    # df_households = get_and_combine_cbs_tables(dict_tables=settings.DICT_POSITIE_HUISHOUDEN, url=settings.CBS_OPEN_URL)
-    # df_households.rename(columns={'perioden': 'interval'})
-    # indexNames = df_households[
-    #     (df_households['postcode'] == 'Nederland') | (df_households['postcode'] == 'Niet in te delen')].index
-    # df_households.drop(indexNames, inplace=True)
-    # for col in ['geslacht', 'positieinhethuishouden']:
-    #     df_households[col] = df_households[col].str.lower().str.replace(" ", "_")
-    # df_households['positiehuishouden'] = df_households['positieinhethuishouden'] + '_' + df_households['geslacht']
-    # df_households = df_households[['bevolking', 'positiehuishouden', 'postcode', 'interval']]
-    # df_households = pd.pivot_table(data=df_households, values='bevolking', index=['postcode', 'interval'],
-    #                                columns=['positiehuishouden'], aggfunc=np.sum).reset_index()
-    # df_households = df_households.set_index(['postcode', 'interval'])
-    # df_households = pd.merge(df_households, df_pc_gem, how='inner', left_index=True, right_index=True).reset_index()
-    # df_households = df_households.groupby(by=['gemeentenaam', 'interval']).sum().reset_index()
+    # Get data of position in households
+    print("Get 'Bevolkings' data")
+    df_households = get_and_combine_cbs_tables(dict_tables=settings.DICT_POSITIE_HUISHOUDEN, url=settings.CBS_OPEN_URL)
+    df_households = df_households.drop(['interval'], axis=1)
+    df_households = df_households.rename(columns={'perioden': 'interval'})
+    indexNames = df_households[
+        (df_households['postcode'] == 'Nederland') | (df_households['postcode'] == 'Niet in te delen')].index
+    df_households.drop(indexNames, inplace=True)
+    for col in ['geslacht', 'positieinhethuishouden']:
+        df_households[col] = df_households[col].str.lower().str.replace(" ", "_")
+    df_households['positiehuishouden'] = df_households['positieinhethuishouden'] + '_' + df_households['geslacht']
+    df_households = df_households[['bevolking', 'positiehuishouden', 'postcode', 'interval']]
+    df_households = pd.pivot_table(data=df_households, values='bevolking', index=['postcode', 'interval'],
+                                   columns=['positiehuishouden'], aggfunc=np.sum).reset_index()
+    df_households = df_households.set_index(['postcode', 'interval'])
+    df_households = pd.merge(df_households, df_pc_gem, how='inner', left_index=True, right_index=True).reset_index()
+    df_households = df_households.groupby(by=['gemeentenaam', 'interval']).sum().reset_index()
 
     # Combine dataset
     print("Combine all datasets to one DataFrame")
