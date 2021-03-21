@@ -3,8 +3,8 @@
 
 # In[5]:
 
-from typing import Union
 from sklearn.base import BaseEstimator, TransformerMixin
+from typing import Union
 import pandas as pd
 
 class ColumnSelector(BaseEstimator, TransformerMixin):
