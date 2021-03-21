@@ -2,6 +2,7 @@ import sys
 sys.path.append('../../')
 
 import pandas as pd
+import numpy as np
 from sklearn import preprocessing
 from sklearn.pipeline import Pipeline, make_pipeline
 
@@ -11,7 +12,7 @@ from src.preprocess.preprocess import get_and_combine_cbs_tables, rename_and_sub
     get_region_period_spec_val_subtable, downcast_variables_dataframe
 from src.utilities.transformers import RelativeColumnScaler, CustomScaler
 
-def load_data():
+def load_data(region='gemeente'):
     """
     Custom function to get the right dataset for the WMO use case. In this script all the necessary data is loaded for
     training and/or predicting the WMO clients
@@ -34,7 +35,7 @@ def load_data():
                                         list_cols=['interval', 'codering_regio', 'perioden', 'typemaatwerkarrangement',
                                                    'wmoclienten', 'wmoclientenper1000inwoners'])
 
-    df_wmo_total = get_region_period_spec_val_subtable(df=df_wmo_sub, region="wijk", period="halfjaar",
+    df_wmo_total = get_region_period_spec_val_subtable(df=df_wmo_sub, region=region, period="halfjaar",
                                                        col='typemaatwerkarrangement',
                                                        spec_value='Hulp bij het huishouden')
     # df_wmo_total = downcast_variables_dataframe(df_wmo_total)
@@ -47,7 +48,6 @@ def load_data():
     df_wijk = get_and_combine_cbs_tables(dict_tables=settings.WIJK_TABLES,
                                          double_trouble_colnames=settings.DOUBLETROUBLECOLNAMES_WIJK,
                                          url=settings.CBS_OPEN_URL)
-
     df_wijk_sub = rename_and_subset_cols(df=df_wijk,
                                          dict_rename=settings.DICT_WIJK_COLS_RENAMED,
                                          list_cols=['id', 'wijkenenbuurten', 'soortregio',
@@ -55,15 +55,46 @@ def load_data():
                                          include=False)
     df_wijk_sub['codering_regio'] = df_wijk_sub['codering_regio'].str.strip()
     df_wijk_sub['gemeentenaam'] = df_wijk_sub['gemeentenaam'].str.strip()
-    df_wijk_total = df_wijk_sub[df_wijk_sub.codering_regio.str.startswith('WK', na=False)]
+    df_wijk_sub['perioden'] = df_wijk_sub['interval'] # just to apply function get_region_period_spec_val_subtable
+    # Extract the municipalities and zipcodes for later
+    df_pc_gem = df_wijk_sub[df_wijk_sub.codering_regio.str.startswith('BU', na=False)][
+        ['codering_regio', 'interval', 'gemeentenaam', 'meestvoorkomendepostcode']].copy()
+    df_pc_gem = df_pc_gem.rename(columns={'meestvoorkomendepostcode': 'postcode'})
+    df_pc_gem['postcode'] = df_pc_gem['postcode'].str.strip()
+    df_pc_gem = df_pc_gem.set_index(['postcode', 'interval'])
+
+    df_wijk_total = get_region_period_spec_val_subtable(df=df_wijk_sub, region=region, period="jaar",
+                                                       spec_value=None)
+    df_wijk_total = df_wijk_total.drop(['perioden'], axis=1)
     # df_wijk_total = downcast_variables_dataframe(df_wijk_total)
     df_wijk_total = df_wijk_total.set_index(['codering_regio', 'interval'])
+
+    # # Get data of position in households
+    # print("Get 'Bevolkings' data")
+    # df_households = get_and_combine_cbs_tables(dict_tables=settings.DICT_POSITIE_HUISHOUDEN, url=settings.CBS_OPEN_URL)
+    # df_households.rename(columns={'perioden': 'interval'})
+    # indexNames = df_households[
+    #     (df_households['postcode'] == 'Nederland') | (df_households['postcode'] == 'Niet in te delen')].index
+    # df_households.drop(indexNames, inplace=True)
+    # for col in ['geslacht', 'positieinhethuishouden']:
+    #     df_households[col] = df_households[col].str.lower().str.replace(" ", "_")
+    # df_households['positiehuishouden'] = df_households['positieinhethuishouden'] + '_' + df_households['geslacht']
+    # df_households = df_households[['bevolking', 'positiehuishouden', 'postcode', 'interval']]
+    # df_households = pd.pivot_table(data=df_households, values='bevolking', index=['postcode', 'interval'],
+    #                                columns=['positiehuishouden'], aggfunc=np.sum).reset_index()
+    # df_households = df_households.set_index(['postcode', 'interval'])
+    # df_households = pd.merge(df_households, df_pc_gem, how='inner', left_index=True, right_index=True).reset_index()
+    # df_households = df_households.groupby(by=['gemeentenaam', 'interval']).sum().reset_index()
 
     # Combine dataset
     print("Combine all datasets to one DataFrame")
     df_dataset_WMO = pd.merge(df_wmo_total, df_wijk_total, how='inner', left_index=True, right_index=True)
+    # df_dataset_WMO = df_dataset_WMO.reset_index()
+    # df_dataset_WMO = pd.merge(df_dataset_WMO, df_households, how='inner', left_on=['gemeentenaam', 'interval'],
+    #                           right_on=['gemeentenaam', 'interval'])
+    # df_dataset_WMO = df_dataset_WMO.set_index(['codering_regio', 'interval'])
 
-    return df_dataset_WMO
+    return df_dataset_WMO #, df_households
 
 def fix_missing(df):
     """
