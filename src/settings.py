@@ -1,11 +1,14 @@
+## Loading data
 # URL of the CBS Statline database
 CBS_OPEN_URL = 'opendata.cbs.nl'
-# CBS tables with information of the WMO clients
+## DATA SCOURCE: Information of the WMO clients
+# Table reference
 WMO_TABLES = {'2020': '84908NED',
               '2019': '84753NED',
               '2018': '84752NED',
               '2017': '84751NED'}
-# CBS tables with the information of key figures for a neighbourhood
+## DATA SCOURCE: Information of key figures for a neighbourhood
+# Table reference
 WIJK_TABLES = {'2020': '84799NED',
                '2019': '84583NED',
                '2018': '84286NED',
@@ -34,9 +37,14 @@ DOUBLETROUBLECOLNAMES_WIJK = {'GemiddeldElektriciteitsverbruikTotaal_47': 'Gemid
                               'PercentageWoningenMetStadsverwarming_63': 'PercentageWoningenMetStadsverwarming_63'}
 # Dictionary with colum that needs to be renamed in WIJK_TABLES
 DICT_WIJK_COLS_RENAMED = {'codering': 'codering_regio'}
-# CBS data with information about the population for each region
+## DATA SCOURCE: Information about the households for each region
 DICT_POSITIE_HUISHOUDEN = {'all':'83504NED'}
+## DATA SCOURCE: Information about the population for each region
+DICT_POPULATION = {'all': '70072NED'}
+## DATA SCOURCE: Information about the number of people with a certain education level for each region
+DICT_EDUCATION = {'all': '84773NED'}
 
+## Feature engineering
 # List of columns to drop after loading data
 DROP_COLS = ['typemaatwerkarrangement', 'gemeentenaam', 'meestvoorkomendepostcode', 'dekkingspercentage',
              'totaaldiefstaluitwoningschuured', 'vernielingmisdrijftegenopenbareorde', 'geweldsenseksuelemisdrijven',

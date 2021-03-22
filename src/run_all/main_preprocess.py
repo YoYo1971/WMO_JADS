@@ -91,12 +91,12 @@ def load_data(region='gemeente'):
     # Combine dataset
     print("Combine all datasets to one DataFrame")
     df_dataset_WMO = pd.merge(df_wmo_total, df_wijk_total, how='inner', left_index=True, right_index=True)
-    # df_dataset_WMO = df_dataset_WMO.reset_index()
-    # df_dataset_WMO = pd.merge(df_dataset_WMO, df_households, how='inner', left_on=['gemeentenaam', 'interval'],
-    #                           right_on=['gemeentenaam', 'interval'])
-    # df_dataset_WMO = df_dataset_WMO.set_index(['codering_regio', 'interval'])
+    df_dataset_WMO = df_dataset_WMO.reset_index()
+    df_dataset_WMO = pd.merge(df_dataset_WMO, df_households, how='inner', left_on=['gemeentenaam', 'interval'],
+                              right_on=['gemeentenaam', 'interval'])
+    df_dataset_WMO = df_dataset_WMO.set_index(['codering_regio', 'interval'])
 
-    return df_dataset_WMO #, df_households
+    return df_dataset_WMO
 
 def fix_missing(df):
     """
