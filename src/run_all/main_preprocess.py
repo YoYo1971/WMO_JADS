@@ -71,7 +71,7 @@ def load_data(region='gemeente'):
     df_wijk_total = df_wijk_total.set_index(['codering_regio', 'interval'])
 
     # Get data of position in households
-    print("Get 'Bevolkings' data")
+    print("Get 'Huishoudens' data")
     df_households = get_and_combine_cbs_tables(dict_tables=settings.DICT_POSITIE_HUISHOUDEN, url=settings.CBS_OPEN_URL)
     df_households = df_households.drop(['interval'], axis=1)
     df_households = df_households.rename(columns={'perioden': 'interval'})
@@ -87,12 +87,62 @@ def load_data(region='gemeente'):
     df_households = df_households.set_index(['postcode', 'interval'])
     df_households = pd.merge(df_households, df_pc_gem, how='inner', left_index=True, right_index=True).reset_index()
     df_households = df_households.groupby(by=['gemeentenaam', 'interval']).sum().reset_index()
+    
+    # Get data of population
+    print("Get 'Bevolkings' data")
+    df_population = get_and_combine_cbs_tables(dict_tables=settings.DICT_POPULATION,
+                                               double_trouble_colnames=settings.DOUBLETROUBLECOLNAMES_POPULATION,
+                                               url=settings.CBS_OPEN_URL)
+    df_population = rename_and_subset_cols(df=df_population,
+                                               dict_rename={"popperioden": "perioden", "popregios": "gemeentenaam"},
+                                               list_cols=['interval'],
+                                               include=False)
+    df_population = df_population[(~df_population['gemeentenaam'].str.contains('\(')) & (df_population['gemeentenaam'] != 'Nederland')]
+    df_population = df_population.rename(columns={"perioden": 'interval'})
+
+    # Get levy data of municipalities
+    print("Get 'Gemeentelijke heffingen' data")
+    df_levy = get_and_combine_cbs_tables(dict_tables=settings.DICT_LEVY,
+                                         url=settings.CBS_OPEN_URL)
+    for col in ['gemeentelijkeheffingenvanaf']:
+        df_levy[col] = df_levy[col].str.lower().str.replace(" ", "_")
+    df_levy = df_levy.drop(['interval'], axis=1)
+    df_levy = df_levy.rename(columns={'perioden': 'interval'})
+    df_levy_euroinwoner = pd.pivot_table(data=df_levy, values='gemeentelijkeheffingeneuroinwoner',
+                                         index=['regios', 'interval'],
+                                         columns=['gemeentelijkeheffingenvanaf'], aggfunc=np.sum).reset_index()
+    df_levy_1000euro = pd.pivot_table(data=df_levy, values='gemeentelijkeheffingenin1000euro',
+                                      index=['regios', 'interval'],
+                                      columns=['gemeentelijkeheffingenvanaf'], aggfunc=np.sum).reset_index()
+    df_levy_euroinwoner = df_levy_euroinwoner.rename(columns={'regios': 'gemeentenaam',
+                                                              'begraafplaatsrechten': 'begraafplaatsrechten_gemeenteheffingeuroinwoner',
+                                                              'precariobelasting': 'precariobelasting_gemeenteheffingeuroinwoner',
+                                                              'reinigingsrechten_en_afvalstoffenheffing': 'reinigingsrechten_en_afvalstoffenheffing_gemeenteheffingeuroinwoner',
+                                                              'rioolheffing': 'rioolheffing_gemeenteheffingeuroinwoner',
+                                                              'secretarieleges_burgerzaken': 'secretarieleges_burgerzaken_gemeenteheffingeuroinwoner',
+                                                              'toeristenbelasting': 'toeristenbelasting_gemeenteheffingeuroinwoner',
+                                                              'totaal_onroerendezaakbelasting': 'totaal_onroerendezaakbelasting_gemeenteheffingeuroinwoner'})
+    df_levy_1000euro = df_levy_1000euro.rename(columns={'regios': 'gemeentenaam',
+                                                        'begraafplaatsrechten': 'begraafplaatsrechten_gemeenteheffing1000euro',
+                                                        'precariobelasting': 'precariobelasting_gemeenteheffing1000euro',
+                                                        'reinigingsrechten_en_afvalstoffenheffing': 'reinigingsrechten_en_afvalstoffenheffing_gemeenteheffing1000euro',
+                                                        'rioolheffing': 'rioolheffing_gemeenteheffing1000euro',
+                                                        'secretarieleges_burgerzaken': 'secretarieleges_burgerzaken_gemeenteheffing1000euro',
+                                                        'toeristenbelasting': 'toeristenbelasting_gemeenteheffing1000euro',
+                                                        'totaal_onroerendezaakbelasting': 'totaal_onroerendezaakbelasting_gemeenteheffing1000euro'})
+    df_levy = pd.merge(df_levy_euroinwoner, df_levy_1000euro, how='inner', left_on=['gemeentenaam', 'interval'],
+                       right_on=['gemeentenaam', 'interval'])
+
 
     # Combine dataset
     print("Combine all datasets to one DataFrame")
-    df_dataset_WMO = pd.merge(df_wmo_total, df_wijk_total, how='inner', left_index=True, right_index=True)
+    df_dataset_WMO = pd.merge(df_wmo_total, df_wijk_total, how='left', left_index=True, right_index=True)
     df_dataset_WMO = df_dataset_WMO.reset_index()
-    df_dataset_WMO = pd.merge(df_dataset_WMO, df_households, how='inner', left_on=['gemeentenaam', 'interval'],
+    df_dataset_WMO = pd.merge(df_dataset_WMO, df_households, how='left', left_on=['gemeentenaam', 'interval'],
+                              right_on=['gemeentenaam', 'interval'])
+    df_dataset_WMO = pd.merge(df_dataset_WMO, df_population, how='left', left_on=['gemeentenaam', 'interval'],
+                              right_on=['gemeentenaam', 'interval'])
+    df_dataset_WMO = pd.merge(df_dataset_WMO, df_levy, how='left', left_on=['gemeentenaam', 'interval'],
                               right_on=['gemeentenaam', 'interval'])
     df_dataset_WMO = df_dataset_WMO.set_index(['codering_regio', 'interval'])
 
@@ -124,7 +174,9 @@ def add_features(df):
     -------
     pd.DataFrame
     """
-
+    df['leeftijd_mix_sum'] = (7.5 * df['k0tot15jaar']) + (20 * df['k15tot25jaar']) + (35 * df['k25tot45jaar']) + (
+                55 * df['k45tot65jaar']) + (75 * df['k65jaarofouder'])
+    df['leeftijd_mix_avg'] = df['leeftijd_mix_sum'] / df['aantalinwoners']
     df['percentagewmoclienten'] = df['wmoclienten']
     df = df.drop(settings.DROP_COLS, axis=1)
     custom_scaler_cols = list(df.columns)

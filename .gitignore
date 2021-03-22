@@ -2,6 +2,8 @@
 .idea/
 
 # Data
+!*/data/df_WMO_WIJK_HOUSEHOLDS_POP_LEVY_features.parquet.gzip
+!*/data/df_WMO_WIJK_HOUSEHOLDS_POP_LEVY.parquet.gzip
 !data/df_get_for_train_WMO_202103112139.parquet.gzip
 data/
 *.csv
