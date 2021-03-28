@@ -52,7 +52,8 @@ def load_data(region='gemeente'):
     df_wijk_sub = rename_and_subset_cols(df=df_wijk,
                                          dict_rename=settings.DICT_WIJK_COLS_RENAMED,
                                          list_cols=['id', 'wijkenenbuurten', 'soortregio',
-                                                    'indelingswijzigingwijkenenbuurten'],
+                                                    'indelingswijzigingwijkenenbuurten',
+                                                    'wmoclienten', 'wmoclientenrelatief'],
                                          include=False)
     df_wijk_sub['codering_regio'] = df_wijk_sub['codering_regio'].str.strip()
     df_wijk_sub['gemeentenaam'] = df_wijk_sub['gemeentenaam'].str.strip()
