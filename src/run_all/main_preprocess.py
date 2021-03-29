@@ -35,14 +35,14 @@ def load_data(region='gemeente'):
                                         list_cols=['interval', 'codering_regio', 'perioden', 'typemaatwerkarrangement',
                                                    'wmoclienten', 'wmoclientenper1000inwoners'])
 
-    df_wmo_total = get_region_period_spec_val_subtable(df=df_wmo_sub, region=region, period="halfjaar",
+    df_wmo_total = get_region_period_spec_val_subtable(df=df_wmo_sub, region=region, period="jaar",
                                                        col='typemaatwerkarrangement',
                                                        spec_value='Hulp bij het huishouden')
     df_wmo_total['codering_regio'] = df_wmo_total['codering_regio'].str.strip()
     # df_wmo_total = downcast_variables_dataframe(df_wmo_total)
     df_wmo_total = df_wmo_total.set_index(['codering_regio', 'interval'])
-    df_wmo_total['periodennum'] = (df_wmo_total['perioden'].str[-4:] + str(0) + df_wmo_total['perioden'].str[:1])
-    df_wmo_total['periodennum'] = df_wmo_total['periodennum'].astype(int)
+    # df_wmo_total['periodennum'] = (df_wmo_total['perioden'].str[-4:] + str(0) + df_wmo_total['perioden'].str[:1])
+    # df_wmo_total['periodennum'] = df_wmo_total['periodennum'].astype(int)
 
     # Get Wijkdata
     print("Get 'WIJK' tables")
