@@ -185,3 +185,65 @@ class ColumnSelector(BaseEstimator, TransformerMixin):
         except KeyError:
             cols_error = list(set(self.cols) - set(X.columns))
             raise KeyError("The DataFrame does not include the columns: %s" % cols_error)
+
+
+class GroupImputer(BaseEstimator, TransformerMixin):
+    """
+    This is a transformer class to impute the missing values with the pd.interpolate method.
+    """
+
+    def __init__(self, groupcol, interpolate_method='linear', cols=None):
+        """
+
+        Parameters
+        ----------
+        groupcol : str
+            Column on which the groupby will be perfomed.
+        interpolate_method : str
+            Method for interpolating, i.e. 'linear', 'time', 'index', 'pad', 'nearest'. Default = 'linear'
+        """
+
+        self.groupcol = groupcol
+        self.interpolate_method = interpolate_method
+        self.cols = cols
+
+    def fit(self, X, y=None):
+        """
+        Standard fit method of transformer which fits the transformer to X
+
+        Parameters
+        ----------
+        X : pd.DataFrame
+            DataFrame with the feature columns, including the column(s) to impute
+        y : pd.Series
+            Default None, not used in fit. The target values in a model
+
+        Returns
+        -------
+        return object itself
+        """
+        if self.cols is None:
+            self.cols = list(X.columns)
+
+        return self
+
+    def transform(self, X):
+        """
+        Standard transform method of transformer which transforms the dataset with a imputer for the
+        selected column(s)
+
+        Parameters
+        ----------
+        X : pd.DataFrame
+            DataFrame with the feature columns, including the categorical column(s)
+
+        Returns
+        -------
+        Transformed dataset X (with imputer as defined) for the selected column(s)
+        """
+
+        X = X.copy()
+        X.loc[:, self.cols] = X[self.cols].groupby(self.groupcol).apply(
+            lambda group: group.interpolate(method=self.interpolate_method))
+
+        return X
