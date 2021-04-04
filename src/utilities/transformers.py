@@ -33,7 +33,11 @@ class RelativeColumnScaler(BaseEstimator, TransformerMixin):
         -------
         return object itself
         """
-        # nothing to fit here people, move along
+        # Ensure that only columns available will be transformed
+        for key, items in self.dict_relatively_cols.items():
+            if key in X.columns:
+                values = [c for c in self.dict_relatively_cols[key] if c in X.columns]
+                self.dict_relatively_cols[key] = values
 
         return self
 
@@ -187,23 +191,25 @@ class ColumnSelector(BaseEstimator, TransformerMixin):
             raise KeyError("The DataFrame does not include the columns: %s" % cols_error)
 
 
-class GroupImputer(BaseEstimator, TransformerMixin):
+class GroupInterpolateImputer(BaseEstimator, TransformerMixin):
     """
     This is a transformer class to impute the missing values with the pd.interpolate method.
     """
 
-    def __init__(self, groupcol, interpolate_method='linear', cols=None):
+    def __init__(self, groupcols, interpolate_method='linear', cols=None):
         """
 
         Parameters
         ----------
-        groupcol : str
+        groupcols : list(str)
             Column on which the groupby will be perfomed.
         interpolate_method : str
             Method for interpolating, i.e. 'linear', 'time', 'index', 'pad', 'nearest'. Default = 'linear'
+        cols : list(str)
+            List of columns to transform
         """
 
-        self.groupcol = groupcol
+        self.groupcols = groupcols
         self.interpolate_method = interpolate_method
         self.cols = cols
 
@@ -243,7 +249,70 @@ class GroupImputer(BaseEstimator, TransformerMixin):
         """
 
         X = X.copy()
-        X.loc[:, self.cols] = X[self.cols].groupby(self.groupcol).apply(
+        X.loc[:, self.cols] = X[self.cols].groupby(self.groupcols).apply(
             lambda group: group.interpolate(method=self.interpolate_method))
+
+        return X
+
+
+class CustomImputer(BaseEstimator, TransformerMixin):
+    """
+    This is a transformer class to impute the selected columns using a defined imputer
+    """
+
+    def __init__(self, imputer, cols=None):
+        """
+
+        Parameters
+        ----------
+        cols : list[str]
+            List of columns to be selected.
+        Imputer : Imputer
+            Imputer to apply, i.e. SimpleImputer() from sklearn
+        """
+
+        self.imputer = imputer
+        self.cols = cols
+
+    def fit(self, X, y=None):
+        """
+        Standard fit method of transformer which fits the imputer to X
+
+        Parameters
+        ----------
+        X : pd.DataFrame
+            DataFrame with the feature columns, including the column(s) to scale
+        y : pd.Series
+            Default None, not used in fit. The target values in a model
+
+        Returns
+        -------
+        Fitted imputer for the selected column(s)
+        """
+        if self.cols is None:
+            self.cols = list(X.columns)
+        numerics = ['int16', 'int32', 'int64', 'float16', 'float32', 'float64']
+        self.cols = [c for c in self.cols if c in X.select_dtypes(include=numerics).columns]
+        self.imputer.fit(X[self.cols])
+
+        return self
+
+    def transform(self, X):
+        """
+        Standard transform method of transformer which transforms the dataset with a imputer for the
+        selected column(s)
+
+        Parameters
+        ----------
+        X : pd.DataFrame
+            DataFrame with the feature columns, including the categorical column(s)
+
+        Returns
+        -------
+        Transformed dataset X (with imputer as defined) for the selected column(s)
+        """
+
+        X = X.copy()
+        X.loc[:, self.cols] = self.imputer.transform(X[self.cols])
 
         return X

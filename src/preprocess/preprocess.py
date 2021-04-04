@@ -132,3 +132,24 @@ def downcast_variables_dataframe(df):
         for col in df.select_dtypes(include=old).columns:
             df_downy.loc[:, col] = pd.to_numeric(df_downy.loc[:, col], downcast=new)
     return df_downy
+
+
+def make_df_missing(df):
+    """
+    Method to calculate the number and percentages of missing values.
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        DataFrame with one or multiple columns
+
+    Returns
+    -------
+    pd.DataFrame with as index columnnames and columns 'num_missing' and 'perc_missing'
+    """
+
+    s_num_missing = df.isnull().sum(axis=0)[df.isnull().sum(axis=0) > 0]
+    s_perc_missing = s_num_missing / len(df)
+    df_missing = pd.DataFrame({'num_missing': s_num_missing, 'perc_missing': s_perc_missing})
+    df_missing = df_missing.sort_values('perc_missing', ascending=False)
+    return df_missing

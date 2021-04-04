@@ -3,14 +3,14 @@ import sys
 sys.path.append('../../')
 import pandas as pd
 import numpy as np
-import datetime
+from datetime import datetime
 
 # Custom functions and settings
 import src.settings as settings
 from src.preprocess.preprocess import get_and_combine_cbs_tables, rename_and_subset_cols, \
     get_region_period_spec_val_subtable, downcast_variables_dataframe
 
-def get_data(save_all=False):
+def get_data(save_all=False, personal_note=""):
     """
     Custom function to get the right dataset for the WMO use case. In this script all the necessary data is loaded for
     training and/or predicting the WMO clients. Note: Most parameters are loaded by settings.get_data
@@ -59,7 +59,6 @@ def get_data(save_all=False):
     df_pc_gem[settings.get_data['LIST_STR_STRIP_COLS_ZIPCODE_LINK_WIJK']] = df_pc_gem[
         settings.get_data['LIST_STR_STRIP_COLS_ZIPCODE_LINK_WIJK']].apply(lambda x: x.str.strip())
     df_pc_gem = df_pc_gem.set_index(settings.get_data['LIST_INDEX_ZIPCODE_LINK_WIJK'])
-
     df_wijk_total = get_region_period_spec_val_subtable(df=df_wijk_sub,
                                                         region=settings.get_data['REGION'],
                                                         period=settings.get_data['PERIOD'],
@@ -134,14 +133,19 @@ def get_data(save_all=False):
                               right_on=settings.get_data['LIST_MERGE_COLS'])
     df_dataset_WMO = df_dataset_WMO.set_index(settings.get_data['LIST_INDEX_WMO'])
 
+    # Save logging and DataFrame
     if save_all:
         datetime_now = datetime.now()
         filename = settings.get_data['FILENAME'] + datetime.strftime(datetime_now, format='%Y%m%d%H%M')
-        df_log = pd.DataFrame({'timestamp_run': [datetime_now],
-                      'filename': [filename],
-                      'settings': [settings.get_data]})
+        df_log = pd.DataFrame({
+            'timestamp_run': [datetime_now],
+            'filename': [filename],
+            'df_output_shape': [df_dataset_WMO.shape],
+            'df_output_cols': [df_dataset_WMO.columns],
+            'settings': [settings.get_data],
+            'personal_note': [personal_note]})
         df_log.to_csv(settings.get_data['LOG_PATH']+filename+'.csv')
-        df_dataset_WMO.to_parquet('../data/' + filename + '.parquet.gzip', compression='gzip')
+        df_dataset_WMO.to_parquet(settings.datapath + filename + '.parquet.gzip', compression='gzip')
 
     return df_dataset_WMO
 
