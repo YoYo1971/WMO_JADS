@@ -1,0 +1,28 @@
+,timestamp_run,filename,df_input_shape,df_input_cols,df_output_shape,df_output_cols,settings,pipeline,personal_note
+0,2021-04-04 21:24:29.191852,df_preprocessed_202104042124,"(936, 470)","Index(['perioden', 'typemaatwerkarrangement', 'wmoclienten', 'wmoclientenper1000inwoners', 'aantalinkomensontvangers', 'aantalinwoners', 'actieven1575jaar', 'afstandtotgrotesupermarkt', 'afstandtothuisartsenpraktijk', 'afstandtotkinderdagverblijf',
+       ...
+       'secretarieleges_burgerzaken_gemeenteheffingeuroinwoner', 'toeristenbelasting_gemeenteheffingeuroinwoner', 'totaal_onroerendezaakbelasting_gemeenteheffingeuroinwoner', 'begraafplaatsrechten_gemeenteheffing1000euro', 'precariobelasting_gemeenteheffing1000euro', 'reinigingsrechten_en_afvalstoffenheffing_gemeenteheffing1000euro', 'rioolheffing_gemeenteheffing1000euro', 'secretarieleges_burgerzaken_gemeenteheffing1000euro', 'toeristenbelasting_gemeenteheffing1000euro', 'totaal_onroerendezaakbelasting_gemeenteheffing1000euro'], dtype='object', length=470)","(936, 11)","Index(['wmoclienten', 'wmoclientenper1000inwoners', 'aantalinwoners', 'gescheiden', 'verweduwd', 'alleenstaande_mannen', 'alleenstaande_vrouwen', 'poparbeidsongeschiktheidtotaal', 'popbevolkingsdichtheid', 'popk65tot80jaarrelatieveleeftijdsgroep', 'popk80jaarofouderrelatieveleeftijdsgroep'], dtype='object')","{'ORIGINAL_INDEX': ['codering_regio', 'interval'], 'MISSING_BOUNDARY': 0.25, 'GROUP_INTERPOLATE_IMPUTER_GROUPCOLS': ['codering_regio'], 'GROUP_INTERPOLATE_IMPUTER_METHOD': 'linear', 'GROUP_INTERPOLATE_IMPUTER_COLS': None, 'IMPUTER': SimpleImputer(), 'DICT_RELATIVELY_COLS': {'aantalinwoners': ['mannen', 'vrouwen', 'alleenstaande_mannen', 'alleenstaande_vrouwen', 'gescheiden', 'ongehuwd', 'ouder_in_eenouderhuishouden_vrouwen', 'ouder_in_eenouderhuishouden_mannen'], 'huishoudenstotaal': ['eenpersoonshuishoudens', 'huishoudenszonderkinderen', 'huishoudensmetkinderen'], 'poptotalebevolking': ['popaantalrestaurantsbinnen3km', 'popafstandtothuisartsenpraktijk', 'poparbeidsongeschiktheidtotaal', 'popbevolkingsdichtheid', 'popk65tot80jaarrelatieveleeftijdsgroep', 'popk80jaarofouderrelatieveleeftijdsgroep', 'popomgevingsadressendichtheid', 'popsterkstedelijk', 'popmatigstedelijk', 'popweinigstedelijk', 'popnietstedelijk', 'poptotaleoppervlakte']}, 'LIST_CUSTOMSCALER_COLS': ['aantalinwoners', 'gemiddeldehuishoudensgrootte', 'gescheiden', 'verweduwd', 'alleenstaande_mannen', 'alleenstaande_vrouwen', 'ouder_in_eenouderhuishouden_mannen', 'ouder_in_eenouderhuishouden_vrouwen', 'popaantalrestaurantsbinnen3km', 'popafstandtothuisartsenpraktijk', 'poparbeidsongeschiktheidtotaal', 'popbevolkingsdichtheid', 'popeenpersoonshuishoudensrelatief', 'popk65tot80jaarrelatieveleeftijdsgroep', 'popk80jaarofouderrelatieveleeftijdsgroep', 'popomgevingsadressendichtheid', 'poppersonenautosrelatief', 'popwerkloosheid'], 'SCALER': MinMaxScaler(), 'LIST_COLUMNSELECTOR_COLS_2': ['codering_regio', 'interval', 'wmoclienten', 'wmoclientenper1000inwoners', 'aantalinwoners', 'gescheiden', 'verweduwd', 'alleenstaande_mannen', 'alleenstaande_vrouwen', 'poparbeidsongeschiktheidtotaal', 'popbevolkingsdichtheid', 'popk65tot80jaarrelatieveleeftijdsgroep', 'popk80jaarofouderrelatieveleeftijdsgroep'], 'LOG_PATH': '../../data/log_preprocess/', 'FILENAME': 'df_preprocessed_'}","Pipeline(steps=[('columnselector-1',
+                 ColumnSelector(cols=['codering_regio', 'interval',
+                                      'wmoclienten',
+                                      'wmoclientenper1000inwoners',
+                                      'aantalinwoners',
+                                      'afstandtotgrotesupermarkt',
+                                      'afstandtothuisartsenpraktijk',
+                                      'afstandtotkinderdagverblijf',
+                                      'afstandtotschool',
+                                      'alandbouwbosbouwenvisserij',
+                                      'bedrijfsvestigingentotaal',
+                                      'bevolkingsdichtheid',
+                                      'bfnijverheidenene...
+                              scaler=MinMaxScaler())),
+                ('columnselector-2',
+                 ColumnSelector(cols=['codering_regio', 'interval',
+                                      'wmoclienten',
+                                      'wmoclientenper1000inwoners',
+                                      'aantalinwoners', 'gescheiden',
+                                      'verweduwd', 'alleenstaande_mannen',
+                                      'alleenstaande_vrouwen',
+                                      'poparbeidsongeschiktheidtotaal',
+                                      'popbevolkingsdichtheid',
+                                      'popk65tot80jaarrelatieveleeftijdsgroep',
+                                      'popk80jaarofouderrelatieveleeftijdsgroep']))])",Minimum_Maikel

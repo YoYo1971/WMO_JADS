@@ -1,6 +1,9 @@
 # JetBrains IDEs
 .idea/
 
+#Mac
+.DS_Store
+
 # Data
 !*/data/df_WMO_WIJK_HUISHOUDENS_BEVOLKING_HEFFING_202104040949.parquet.gzip
 !data/*.parquet.gzip

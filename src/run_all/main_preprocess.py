@@ -72,8 +72,9 @@ def preprocess_data(df, save_all=False, personal_note=""):
                                'settings': [settings.preprocess],
                                'pipeline': [pl_preprocess],
                                'personal_note': [personal_note]})
-        df_log.to_csv(settings.preprocess['LOG_PATH'] + filename + '.csv')
-        df_preprocessed.to_parquet(settings.datapath + filename + '.parquet.gzip', compression='gzip')
+        df_log.to_csv(settings.preprocess['LOG_PATH'] + filename + '_' + personal_note + '.csv')
+        df_preprocessed.to_parquet(settings.datapath + filename + '_' + personal_note + '.parquet.gzip',
+                                   compression='gzip')
 
     return df_preprocessed
 

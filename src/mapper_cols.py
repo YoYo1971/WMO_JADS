@@ -698,6 +698,7 @@ LIST_WMO_GET_DATA_BOERENVERSTAND_MAIKEL = ['aantalinwoners',
                                            'poppersonenautosrelatief',
                                            'popwerkloosheid']
 LIST_COLUMNSELECTOR_2_BOERENVERSTAND_MAIKEL = ['codering_regio', 'interval',
+                                               'wmoclienten', 'wmoclientenper1000inwoners',
                                                'aantalinwoners',
                                                'gemiddeldehuishoudensgrootte',
                                                'gescheiden',

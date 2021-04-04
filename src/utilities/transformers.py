@@ -38,6 +38,8 @@ class RelativeColumnScaler(BaseEstimator, TransformerMixin):
             if key in X.columns:
                 values = [c for c in self.dict_relatively_cols[key] if c in X.columns]
                 self.dict_relatively_cols[key] = values
+            else:
+                del self.dict_relatively_cols[key]
 
         return self
 

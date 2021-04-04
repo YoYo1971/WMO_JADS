@@ -524,3 +524,7 @@ preprocess = {
     'LOG_PATH': '../../data/log_preprocess/',
     'FILENAME': 'df_preprocessed_'
 }
+
+## Train settings
+train = {
+    'LOG_PATH': '../../data/log_train/',}

@@ -31,3 +31,8 @@ def get_latest_file(filename_str_contains, datapath='../data/', filetype='parque
     if filetype == 'pickle':
         model = pickle.load(open(datapath + filename, 'rb'))
         return model
+
+def list_filenames(path, filename_str_contains):
+    all_files = sorted([f for f in listdir(path) if isfile(join(path, f))])
+    filenames = [s for s in all_files if filename_str_contains in s]
+    return filenames
