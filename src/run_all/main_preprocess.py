@@ -8,18 +8,18 @@ from sklearn.pipeline import Pipeline, make_pipeline
 
 # Custom functions and settings
 import src.settings as settings
-from src.utilities.transformers import RelativeColumnScaler, CustomScaler
+from src.utilities.transformers import ColumnSelector, RelativeColumnScaler, CustomScaler
 
 def preprocess_data(df, settings, save=True):
 
-    # Determine missing & drop --> input for column selector cols
     # Drop missing (string cols) --> input for column selector cols
+    # Determine missing & drop --> input for column selector cols
     # Pipeline fit_transform
         # Columnselector (select cols for process)
         # GroupImputer
         # RelativeScaler
         # CustomScaler
-        # Columnselector (select cols for minimum features
+        # Columnselector (select cols for minimum features)
     # Optional: save
         # Save df as parquet (with filename)
         # Save preprocess settings

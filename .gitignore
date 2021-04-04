@@ -2,11 +2,13 @@
 .idea/
 
 # Data
-!*/data/df_WMO_WIJK_HOUSEHOLDS_POP_LEVY_features.parquet.gzip
-!*/data/df_WMO_WIJK_HOUSEHOLDS_POP_LEVY.parquet.gzip
-!data/df_get_for_train_WMO_202103112139.parquet.gzip
-data/
+!*/data/df_WMO_WIJK_HUISHOUDENS_BEVOLKING_HEFFING_202104040949.parquet.gzip
+!data/*.parquet.gzip
 *.csv
+!data/log_get_data/*.csv
+!data/log_preprocess/*.csv
+!data/log_train/*.csv
+
 
 #img
 img/
