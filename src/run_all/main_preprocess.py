@@ -66,11 +66,11 @@ def preprocess_data(df, save_all=False, personal_note=""):
         df_log = pd.DataFrame({'timestamp_run': [datetime_now],
                                'filename': [filename],
                                'df_input_shape': [df.shape],
-                               'df_input_cols': [df.columns],
+                               'df_input_cols': [list(df.columns)],
                                'df_output_shape': [df_preprocessed.shape],
-                               'df_output_cols': [df_preprocessed.columns],
+                               'df_output_cols': [list(df_preprocessed.columns)],
                                'settings': [settings.preprocess],
-                               'pipeline': [pl_preprocess],
+                               'pipeline': [pl_preprocess.steps],
                                'personal_note': [personal_note]})
         df_log.to_csv(settings.preprocess['LOG_PATH'] + filename + '_' + personal_note + '.csv')
         df_preprocessed.to_parquet(settings.datapath + filename + '_' + personal_note + '.parquet.gzip',

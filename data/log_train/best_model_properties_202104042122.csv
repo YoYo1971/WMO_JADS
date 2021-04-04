@@ -1,2 +1,0 @@
-Model,Gridsearch_Params,Train_RMSE,Test_RMSE,Number_of_features,Y_value,Input_filename,Output_filename
-Ridge,alpha=1,5.845370227698905,6.229237651676662,508,wmoclientenper1000inwoners,Hier komt uiteindelijk de input_filename_locatie,../../data/best_model_202104042122.pickle
