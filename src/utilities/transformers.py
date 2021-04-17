@@ -198,7 +198,7 @@ class GroupInterpolateImputer(BaseEstimator, TransformerMixin):
     This is a transformer class to impute the missing values with the pd.interpolate method.
     """
 
-    def __init__(self, groupcols, interpolate_method='linear', cols=None):
+    def __init__(self, groupcols, interpolate_method='linear', cols=None, **kwargs):
         """
 
         Parameters
@@ -214,6 +214,7 @@ class GroupInterpolateImputer(BaseEstimator, TransformerMixin):
         self.groupcols = groupcols
         self.interpolate_method = interpolate_method
         self.cols = cols
+        self.kwargs_interpolate = {k: v for k, v in kwargs.items() if k in list(pd.DataFrame.interpolate.__code__.co_varnames)}
 
     def fit(self, X, y=None):
         """
@@ -252,7 +253,7 @@ class GroupInterpolateImputer(BaseEstimator, TransformerMixin):
 
         X = X.copy()
         X.loc[:, self.cols] = X[self.cols].groupby(self.groupcols).apply(
-            lambda group: group.interpolate(method=self.interpolate_method))
+            lambda group: group.interpolate(method=self.interpolate_method, **self.kwargs_interpolate))
 
         return X
 

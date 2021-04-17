@@ -28,6 +28,10 @@ def preprocess_data(df, save_all=False, personal_note=""):
     Returns
     -------
     pd.DataFrame with preprocessed data.
+
+    TODO:
+    * Sort values in beginning based on codering_regio & interval.
+    * Add something to delete outliers in Y (what about features?!)
     """
 
     df_preprocess = df.reset_index().copy()
