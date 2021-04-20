@@ -83,6 +83,106 @@ def preprocess_data(df, save_all=False, personal_note=""):
     return df_preprocessed
 
 
+def preprocess_data_predict(df_get_data, df_prognoses, save_all=False, personal_note=""):
+
+    total_periods_str = list(df_prognoses['interval'].unique())[:-1]
+    # TODO: Fix total_periods_str in a way that only nan values are deleted!
+    # Concat with original 'get data' dataframe (incl. drop multiplicacities that don't occur in original dataset)
+    list_unchanged_multiplicacities = df_get_data[df_get_data['interval'] == df_get_data['interval'].max()][
+        'codering_regio'].unique()
+    df_prognoses = df_prognoses[df_prognoses['codering_regio'].isin(list_unchanged_multiplicacities)]
+    print(f"Shape of df_prognoses = {df_prognoses.shape}")
+    df_future = pd.concat([df_get_data, df_prognoses], axis=0)
+    df_future = df_future.sort_values(['codering_regio', 'interval']).reset_index().drop(['index'], axis=1)
+    print(f"Shape of df_future = {df_future.shape}")
+
+    ## Extend dataframe for blancs
+    print("Start extending blancs in DataFrame with future values")
+    # Determine columns for each imputing strategy
+    list_cols_prognoses = df_prognoses.columns
+    # list_cols_prognoses_str = [x for x in list(df_prognoses.loc[:, df_prognoses.dtypes == object].columns) if x!='codering_regio']
+    list_cols_prognoses_num = list(df_prognoses.loc[:, df_prognoses.dtypes != object].columns)
+    list_all_columns = list(df_future.columns)
+    list_cols_str = list(df_future.loc[:, df_future.dtypes == object].columns)
+    list_cols_str = list(set(list_cols_str) - set(list_cols_prognoses))
+    list_cols_trained_model = settings.predict['LIST_COLS_TRAINED_MODEL']
+    list_cols_trained_model = list(set([x.replace('relative_', '') for x in list_cols_trained_model]))
+    list_cols_relate_imputer = list(
+        set(list_cols_trained_model) - set(settings.predict['LIST_COLS_TRAINED_MODEL_INVARIABLY']) - set(
+            list_cols_prognoses))
+    list_cols_group_imputer = list(set(list_all_columns) - set(list_cols_str) - set(list_cols_relate_imputer))
+
+    # ffill for string columns
+    print("ffill for string columns")
+    df_future.loc[:, list_cols_str] = df_future.loc[:, list_cols_str].ffill()
+    print(f"Shape of df_future = {df_future.shape}")
+
+    # Group imputer for available future / invariably columns / columns not used in trained model
+    print("Group imputer for available future / invariably columns / columns not used in trained model")
+    GII = GroupInterpolateImputer(groupcols=settings.predict['GROUP_INTERPOLATE_IMPUTER_GROUPCOLS'],
+                                  interpolate_method=settings.predict['GROUP_INTERPOLATE_IMPUTER_METHOD'],
+                                  cols=list_cols_group_imputer)
+    df_future = GII.fit_transform(df_future)
+    print(f"Shape of df_future = {df_future.shape}")
+
+    # Relational imputer for other columns in trained model
+    print("Relational imputer for other columns in trained model")
+    df_preprocessed_predict = df_future.copy()
+    base_col = 'aantalinwoners'
+    # future_years = ['2020', '2021', '2022', '2023', '2024', '2025']
+    all_relate_cols_necessary = settings.predict['LIST_COLS_GROUPER_RELATE_IMPUTER'] + list_cols_relate_imputer + [
+        base_col]
+    df_base_year = df_preprocessed_predict[df_preprocessed_predict['interval'] == '2019'][all_relate_cols_necessary]
+    df_base_year.loc[:, list_cols_relate_imputer] = df_base_year.loc[:, list_cols_relate_imputer].div(
+        df_base_year[base_col], axis=0)
+    df_base_year = df_base_year[df_base_year['codering_regio'].isin(
+        df_preprocessed_predict[df_preprocessed_predict['interval'] == total_periods_str[-1]].codering_regio.unique())]
+    df_preprocessed_predict = df_preprocessed_predict.set_index('codering_regio')
+    for col in list_cols_relate_imputer:
+        df_preprocessed_predict.loc[:, col] = df_preprocessed_predict.loc[:, base_col]
+        df_preprocessed_predict.loc[:, col] = df_preprocessed_predict.loc[:, col] * \
+                                              df_base_year.set_index('codering_regio')[col]
+    print(f"Shape of df_future = {df_preprocessed_predict.shape}")
+    df_preprocessed_predict = df_preprocessed_predict[
+        df_preprocessed_predict['interval'].isin(total_periods_str)].reset_index()
+    # df_future = df_future.set_index(['codering_regio', 'interval'])
+    print(f"Shape of df_future = {df_preprocessed_predict.shape}")
+    # base_col = 'aantalinwoners'
+    # # future_years = ['2020', '2021', '2022', '2023', '2024', '2025']
+    # all_relate_cols_necessary = settings.predict['LIST_COLS_GROUPER_RELATE_IMPUTER'] + list_cols_relate_imputer + [
+    #     base_col]
+    # df_base_year = df_future[df_future['interval'] == '2019'][all_relate_cols_necessary]
+    # df_base_year.loc[:, list_cols_relate_imputer] = df_base_year.loc[:, list_cols_relate_imputer].div(
+    #     df_base_year[base_col], axis=0)
+    # df_base_year = df_base_year[df_base_year['codering_regio'].isin(
+    #     df_future[df_future['interval'] == total_periods_str[-1]].codering_regio.unique())]
+    # df_future = df_future.set_index('codering_regio')
+    # for col in list_cols_relate_imputer:
+    #     df_future.loc[:, col] = df_future.loc[:, base_col]
+    #     df_future.loc[:, col] = df_future.loc[:, col] * df_base_year.set_index('codering_regio')[col]
+    # print(f"Shape of df_future = {df_future.shape}")
+    # df_future = df_future[df_future['interval'].isin(total_periods_str)].reset_index()
+    # # df_future = df_future.set_index(['codering_regio', 'interval'])
+    # print(f"Shape of df_future = {df_future.shape}")
+
+    # Save logging and DataFrame
+    if save_all:
+        datetime_now = datetime.now()
+        # filename = settings.preprocess['FILENAME'] + datetime.strftime(datetime_now, format='%Y%m%d%H%M')
+        # df_log = pd.DataFrame({'timestamp_run': [datetime_now],
+        #                        'filename': [filename],
+        #                        'df_input_shape': [df.shape],
+        #                        'df_input_cols': [list(df.columns)],
+        #                        'df_output_shape': [df_preprocessed.shape],
+        #                        'df_output_cols': [list(df_preprocessed.columns)],
+        #                        'settings': [settings.preprocess],
+        #                        'pipeline': [pl_preprocess.steps],
+        #                        'personal_note': [personal_note]})
+        # df_log.to_csv(settings.preprocess['LOG_PATH'] + filename + '_' + personal_note + '.csv')
+        # df_preprocessed.to_parquet(settings.datapath + filename + '_' + personal_note + '.parquet.gzip',
+        #                            compression='gzip')
+
+    return df_preprocessed_predict
 
 def add_features(df):
     """
