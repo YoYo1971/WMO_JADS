@@ -520,31 +520,27 @@ preprocess = {
     'DICT_RELATIVELY_COLS': mapper_cols.DICT_WMO_RELATIVELY_COLS_BOERENVERSTAND_MAIKEL,
     'LIST_CUSTOMSCALER_COLS': mapper_cols.LIST_WMO_GET_DATA_BOERENVERSTAND_MAIKEL,
     'SCALER': preprocessing.MinMaxScaler(),
-    'LIST_COLUMNSELECTOR_COLS_2': mapper_cols.LIST_COLUMNSELECTOR_2_BOERENVERSTAND_MAIKEL,
+    'LIST_COLUMNSELECTOR_COLS_2': mapper_cols.LIST_COLUMNSELECTOR_2_FINAL,
     'LOG_PATH': '../../data/log_preprocess/',
     'FILENAME': 'df_preprocessed_'
 }
 
 ## Train settings
+"""
+LOG_PATH : str
+    Path of saving logging files. Default: '../../data/log_train/',
+"""
 train = {
-    'LOG_PATH': '../../data/log_train/',}
+    'LOG_PATH': '../../data/log_train/'}
 
 ## Predict settings
+"""
 
-predict = {
-    'DICT_TABLES_BEVOLKING': {'all':'84528NED'},
-    'DICT_COLS_RENAMED_BEVOLKING': {'bevolkingaanheteindvandeperiode':'aantalinwoners',
-                                    'regioindeling': 'gemeentenaam'},
-    'LIST_COLS_SUBSET_BEVOLKING': ['aantalinwoners', 'interval', 'perioden', 'gemeentenaam'],
-    'DICT_TABLES_HUISHOUDEN': {'all':'84526NED'},
-    'DICT_COLS_RENAMED_HUISHOUDEN': {'regioindeling': 'gemeentenaam'},
-    'DICT_COLS_RENAMED_HUISHOUDEN_PIVOT': {'Eenouderhuishouden':'ouder_in_eenouderhuishouden_totaal_mannen_en_vrouwen',
-                                     'Eenpersoonshuishouden': 'eenpersoonshuishoudens',
-                                     'Paar':'paar',
-                                     'Particulier huishouden': 'poptotaalaantalparticulierehuishoudens'},
-    'LIST_COLS_SUBSET_HUISHOUDING_PIVOT': ['gemeentenaam', 'interval',
-                                     'eenpersoonshuishoudens',
-                                     'poptotaalaantalparticulierehuishoudens'],
+"""
+get_data_predict = {
+    'LIST_PERIODS': [2020,2021,2022, 2023],
+    'REGION_COL': 'gemeentenaam',
+    'PERIOD_COL': 'interval',
     'DICT_TABLES_REGIOINDELING': {'all':'83859NED'},
     'DICT_DOUBLETROUBLECOLNAMES_REGIOINDELING':{'Code_1': 'Code_1gemeente',
              'Naam_2': 'Naam_2gemeente',
@@ -608,6 +604,26 @@ predict = {
                                         'sorteringnaam3gemeente': 'sorteringsnaamgemeente'},
     'LIST_COLS_SUBSET_REGIOINDELING': ['codering_regio', 'gemeentenaam'],
     'LIST_STR_STRIP_COLS_REGIOINDELING': ['codering_regio', 'gemeentenaam'],
+    'DICT_TABLES_HUISHOUDEN': {'all': '84526NED'},
+    'DICT_COLS_RENAMED_HUISHOUDEN': {'regioindeling': 'gemeentenaam'},
+    'DICT_COLS_RENAMED_HUISHOUDEN_PIVOT': {'Eenouderhuishouden': 'ouder_in_eenouderhuishouden_totaal_mannen_en_vrouwen',
+                                           'Eenpersoonshuishouden': 'eenpersoonshuishoudens',
+                                           'Paar': 'paar',
+                                           'Particulier huishouden': 'poptotaalaantalparticulierehuishoudens'},
+    'LIST_COLS_SUBSET_HUISHOUDING_PIVOT': ['gemeentenaam', 'interval',
+                                           'eenpersoonshuishoudens',
+                                           'poptotaalaantalparticulierehuishoudens'],
+    'DICT_TABLES_BEVOLKING': {'all':'84528NED'},
+    'DICT_COLS_RENAMED_BEVOLKING': {'bevolkingaanheteindvandeperiode':'aantalinwoners',
+                                    'regioindeling': 'gemeentenaam'},
+    'LIST_COLS_SUBSET_BEVOLKING': ['aantalinwoners', 'interval', 'perioden', 'gemeentenaam'],
+    'LIST_INDEX': ['codering_regio', 'interval'],
+    'FILENAME_GET_DATA_PREDICT': "df_get_data_predict_",
+    'LOG_PATH':'../../data/log_get_data/'
+    }
+preprocess_predict = {
+    'REGION_COL': 'codering_regio',
+    'PERIOD_COL': 'interval',
     'LIST_COLS_TRAINED_MODEL': ['codering_regio',
                                  'interval',
                                  'wmoclienten',
@@ -669,7 +685,12 @@ predict = {
     'GROUP_INTERPOLATE_IMPUTER_GROUPCOLS': ['codering_regio'],
     'GROUP_INTERPOLATE_IMPUTER_METHOD': 'linear',
     'GROUP_INTERPOLATE_IMPUTER_COLS': None,
+    'BASE_COL_RELATE_IMPUTER': 'aantalinwoners',
     'LIST_COLS_GROUPER_RELATE_IMPUTER': ['codering_regio', 'interval'],
+    'LOG_PATH': '../../data/log_preprocess/',
+    'FILENAME': 'df_preprocess_predict_'
+    }
+predict = {
     'LOG_PATH': '../../data/log_predict/',
     'FILENAME': 'df_predict_'
-}
+    }

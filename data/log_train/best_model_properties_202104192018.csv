@@ -1,0 +1,6 @@
+Model,Gridsearch_Params,Train_RMSE,Test_RMSE,Number_of_features,Y_value,Input_filename,Output_filename
+XGBRegressor,"base_score=0.5, booster='gbtree', colsample_bylevel=1,
+             colsample_bynode=1, colsample_bytree=1, gamma=2, gpu_id=-1,
+             importance_type='gain', interaction_constraints='',
+             learning_rate=0.300000012, max_delta_step=0, max_depth=6,
+             min_child_weight=1, missing=nan, monotone_constraints='",5.4440744371876235,5.2714100899898275,41,wmoclientenper1000inwoners,df_preprocessed_202104042151_Boerenverstand_Maikel.parquet.gzip,../../data/best_model_202104192018.pickle

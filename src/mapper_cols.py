@@ -956,3 +956,12 @@ LIST_CUSTOMSCALER_COLS_HEFFING = ['begraafplaatsrechten_gemeenteheffingeuroinwon
                                   'secretarieleges_burgerzaken_gemeenteheffing1000euro',
                                   'toeristenbelasting_gemeenteheffing1000euro',
                                   'totaal_onroerendezaakbelasting_gemeenteheffing1000euro']
+LIST_COLUMNSELECTOR_2_FINAL = ['relative_huishoudensmetkinderen',
+                                'relative_poparbeidsongeschiktheidtotaal',
+                                'relative_ongehuwd',
+                                'relative_poptotaleoppervlakte',
+                                'relative_huishoudenszonderkinderen',
+                                'relative_ouder_in_eenouderhuishouden_vrouwen',
+                                'relative_alleenstaande_mannen',
+                                'relative_popafstandtothuisartsenpraktijk',
+                                'relative_popbevolkingsdichtheid']

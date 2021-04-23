@@ -1,0 +1,6 @@
+Model,Gridsearch_Params,Train_RMSE,Test_RMSE,Number_of_features,Y_value,Input_filename,Output_filename
+XGBRegressor,"base_score=0.5, booster='gbtree', colsample_bylevel=1,
+             colsample_bynode=1, colsample_bytree=1, gamma=1.5, gpu_id=-1,
+             importance_type='gain', interaction_constraints='',
+             learning_rate=0.300000012, max_delta_step=0, max_depth=6,
+             min_child_weight=1, missing=nan, monotone_constraints='",6.071661221460883,5.514537267827198,9,wmoclientenper1000inwoners,df_preprocessed_202104042151_Minimum_Maikel.parquet.gzip,../../data/best_model_202104150933.pickle
