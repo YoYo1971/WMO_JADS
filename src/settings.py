@@ -6,7 +6,7 @@ from sklearn.impute import SimpleImputer
 from sklearn import preprocessing
 
 ## General settings
-datapath = '../../data/'
+DATAPATH = '../../data/'
 Y_TARGET_COLS = ['wmoclienten', 'wmoclientenper1000inwoners']
 
 ## Get data settings
@@ -81,7 +81,7 @@ LOG_PATH: str
 FILENAME: str
     String for prefic filename.
 
-Other notable tables that we could take into account:
+Other notable tables that we have taken into account:
 WMO_TABLE2 = {'all': '83268NED'} # Per gemeente
 WMO_TABLE3 = {'all': '83262NED'} # Per gemeente incl. verbijzondering --> EDA
 DICT_EDUCATION = {'all': '84773NED'}  # Doesn't have period, which makes it 'strange' to add
@@ -517,10 +517,62 @@ preprocess = {
     'GROUP_INTERPOLATE_IMPUTER_METHOD': 'linear',
     'GROUP_INTERPOLATE_IMPUTER_COLS': None,
     'IMPUTER': SimpleImputer(missing_values=np.nan, strategy='mean'),
-    'DICT_RELATIVELY_COLS': mapper_cols.DICT_WMO_RELATIVELY_COLS_BOERENVERSTAND_MAIKEL,
-    'LIST_CUSTOMSCALER_COLS': mapper_cols.LIST_WMO_GET_DATA_BOERENVERSTAND_MAIKEL,
+    'DICT_RELATIVELY_COLS': {
+        'aantalinwoners': ['mannen',
+                           'vrouwen',
+                           'alleenstaande_mannen',
+                           'alleenstaande_vrouwen',
+                           'gescheiden',
+                           'ongehuwd',
+                           'ouder_in_eenouderhuishouden_vrouwen',
+                           'ouder_in_eenouderhuishouden_mannen'],
+        'huishoudenstotaal': ['eenpersoonshuishoudens',
+                              'huishoudenszonderkinderen',
+                              'huishoudensmetkinderen'],
+        'poptotalebevolking': ['popaantalrestaurantsbinnen3km',
+                               'popafstandtothuisartsenpraktijk',
+                               'poparbeidsongeschiktheidtotaal',
+                               'popbevolkingsdichtheid',
+                               'popk65tot80jaarrelatieveleeftijdsgroep',
+                               'popk80jaarofouderrelatieveleeftijdsgroep',
+                               'popomgevingsadressendichtheid',
+                               'popwerkloosheid'
+                               'popzeersterkstedelijk',
+                               'popsterkstedelijk',
+                               'popmatigstedelijk',
+                               'popweinigstedelijk',
+                               'popnietstedelijk',
+                               'poptotaleoppervlakte']},
+    'LIST_CUSTOMSCALER_COLS': ['aantalinwoners',
+                               'gemiddeldehuishoudensgrootte',
+                               'gescheiden',
+                               'verweduwd',
+                               'alleenstaande_mannen',
+                               'alleenstaande_vrouwen',
+                               'ouder_in_eenouderhuishouden_mannen',
+                               'ouder_in_eenouderhuishouden_vrouwen',
+                               'popaantalrestaurantsbinnen3km',
+                               'popafstandtothuisartsenpraktijk',
+                               'poparbeidsongeschiktheidtotaal',
+                               'popbevolkingsdichtheid',
+                               'popeenpersoonshuishoudensrelatief',
+                               'popk65tot80jaarrelatieveleeftijdsgroep',
+                               'popk80jaarofouderrelatieveleeftijdsgroep',
+                               'popomgevingsadressendichtheid',
+                               'poppersonenautosrelatief',
+                               'popwerkloosheid'],
     'SCALER': preprocessing.MinMaxScaler(),
-    'LIST_COLUMNSELECTOR_COLS_2': mapper_cols.LIST_COLUMNSELECTOR_2_FINAL,
+    'LIST_COLUMNSELECTOR_COLS_2': ['codering_regio', 'interval',
+                                    'wmoclienten', 'wmoclientenper1000inwoners',
+                                   'relative_huishoudensmetkinderen',
+                                    'relative_poparbeidsongeschiktheidtotaal',
+                                    'relative_ongehuwd',
+                                    'relative_poptotaleoppervlakte',
+                                    'relative_huishoudenszonderkinderen',
+                                    'relative_ouder_in_eenouderhuishouden_vrouwen',
+                                    'relative_alleenstaande_mannen',
+                                    'relative_popafstandtothuisartsenpraktijk',
+                                    'relative_popbevolkingsdichtheid'],
     'LOG_PATH': '../../data/log_preprocess/',
     'FILENAME': 'df_preprocessed_'
 }
@@ -531,11 +583,61 @@ LOG_PATH : str
     Path of saving logging files. Default: '../../data/log_train/',
 """
 train = {
-    'LOG_PATH': '../../data/log_train/'}
+    'Y_VALUE': ['wmoclientenper1000inwoners'],
+    'TEST_SIZE': 0.3,
+    'RANDOM_STATE': 42,
+    'CROSS_VALIDATE': 5,
+    'MODEL_SCORING': 'neg_mean_squared_error',
+    'GRIDSEARCH_ALPHA': [0.001, 0.01, 0.1, 1, 10, 100, 1000],
+    'GRIDSEARCH_NEIGHBORS': [3, 5, 11, 19],
+    'GRIDSEARCH_NORMALIZE': [True, False],
+    'GRIDSEARCH_KERNEL': ['linear', 'poly', 'rbf', 'sigmoid', 'precomputed'],
+    'GRIDSEARCH_GAMMA': [0.5, 1, 1.5, 2, 5],
+    'GRIDSEARCH_N_ESTIMATORS': [50,100,200],
+    'GRIDSEARCH_C_REGULARIZATION': [0.001, 0.01, 0,1, 1],
+    'FILENAME_MODEL': 'best_model_',
+    'LOG_PATH': '../../data/log_train/'
+}
 
 ## Predict settings
+# get_data_predict
 """
-
+LIST_PERIODS : list(int)
+    List with the integer year values to be predicted.
+REGION_COL: str
+    String value of the column which represents the region.
+PERIOD_COL : str
+    String value of the column which represents the period.
+DICT_TABLES_REGIOINDELING : dict(str:str) 
+    Dictionary with the tablename of the regional layout used in the prognoses.
+DICT_DOUBLETROUBLECOLNAMES_REGIOINDELING : dict(str:str)
+    Dictionary with a remapping of the column names to ensure that the code will not lead to duplicate column names. 
+DICT_COLS_RENAMED_REGIOINDELING : dict(str:str)
+    Dictionary with colum that needs to be renamed in regional layout table.
+LIST_COLS_SUBSET_REGIOINDELING : list(str)
+    List with string values of the column names to subset.
+LIST_STR_STRIP_COLS_REGIOINDELING : list(str)
+    List with string values of the column names to str strip the values of leading and trailing spaces.
+DICT_TABLES_HUISHOUDEN : dict(str:str)
+    Dictionary with the tablename of the prognoses of households.
+DICT_COLS_RENAMED_HUISHOUDEN : dict(str:str)
+    Dictionary with colum that needs to be renamed in household table.
+DICT_COLS_RENAMED_HUISHOUDEN_PIVOT : dict(str:str)
+    Dictionary with colum that needs to be renamed in pivot household table.
+LIST_COLS_SUBSET_HUISHOUDING_PIVOT : list(str)
+    List with columns that will be selected in the pivot household table.
+DICT_TABLES_BEVOLKING : dict(str:str)
+    Dictionary with the tablename of the prognoses of the population.
+DICT_COLS_RENAMED_BEVOLKING : dict(str:str)
+    Dictionary with colum that needs to be renamed in population table.
+LIST_COLS_SUBSET_BEVOLKING : list(str)
+    List with columns that will be selected in the population table.
+LIST_INDEX : list(str)
+    List with column values that will be the index.
+FILENAME_GET_DATA_PREDICT : str
+    String value of the prefix in the filename of this step.
+LOG_PATH : str
+    String value of the path to save the logging in. 
 """
 get_data_predict = {
     'LIST_PERIODS': [2020,2021,2022, 2023],
@@ -621,6 +723,33 @@ get_data_predict = {
     'FILENAME_GET_DATA_PREDICT': "df_get_data_predict_",
     'LOG_PATH':'../../data/log_get_data/'
     }
+
+# preprocess_predict
+"""
+REGION_COL: str
+    String value of the column which represents the region.
+PERIOD_COL : str
+    String value of the column which represents the period.
+LIST_COLS_TRAINED_MODEL : list(str)
+    List of columns which are use by the trained model.
+LIST_COLS_TRAINED_MODEL_INVARIABLY : list(str)
+    List of columns in the trained model which are (basically) constant.
+GROUP_INTERPOLATE_IMPUTER_GROUPCOLS : list(str)
+    List with columns to groupby on.
+GROUP_INTERPOLATE_IMPUTER_METHOD : str
+    Method to interpolate with (pd.interpolate). Default: 'linear'
+GROUP_INTERPOLATE_IMPUTER_COLS : list(str)
+    List of columnnames to imputer with the group imputer.
+BASE_COL_RELATE_IMPUTER : str
+    Column name of the base column which will be used to calculate the relation in the past (%) and use that
+    relation to fill in the missing values in the future.
+LIST_COLS_GROUPER_RELATE_IMPUTER : list(str)
+    List of columns to groupby on when imputing (based on relation).    
+LOG_PATH : str
+    String value of the path to save the logging in. 
+FILENAME : str
+    String value of the prefix in the filename of this step.
+"""
 preprocess_predict = {
     'REGION_COL': 'codering_regio',
     'PERIOD_COL': 'interval',
@@ -690,6 +819,14 @@ preprocess_predict = {
     'LOG_PATH': '../../data/log_preprocess/',
     'FILENAME': 'df_preprocess_predict_'
     }
+
+# predict
+"""
+LOG_PATH : str
+    String value of the path to save the logging in. 
+FILENAME : str
+    String value of the prefix in the filename of this step.
+"""
 predict = {
     'LOG_PATH': '../../data/log_predict/',
     'FILENAME': 'df_predict_'

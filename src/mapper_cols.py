@@ -740,8 +740,8 @@ LIST_COLUMNSELECTOR_2_BOERENVERSTAND_MAIKEL = ['codering_regio', 'interval',
                                                'relative_popweinigstedelijk',
                                                'relative_popnietstedelijk',
                                                'relative_poptotaleoppervlakte']
-DICT_RELATIVELY_COL_WMO = {}
-LIST_CUSTOMSCALER_COLS_WMO = []
+DICT_RELATIVELY_COL_WMO_EMPTY = {}
+LIST_CUSTOMSCALER_COLS_WMO_EMPTY = []
 DICT_RELATIVELY_COL_WIJK = {
     'aantalinwoners': ['percentagewmoclienten', 'mannen', 'vrouwen', 'k0tot15jaar', 'k15tot25jaar',
                        'k25tot45jaar', 'k45tot65jaar', 'k65jaarofouder', 'ongehuwd', 'gehuwd',

@@ -33,6 +33,20 @@ def get_latest_file(filename_str_contains, datapath='../data/', filetype='parque
         return model
 
 def list_filenames(path, filename_str_contains):
+    """
+    Method to get a list of filenames with a certain string value in the name.
+
+    Parameters
+    ----------
+    path : str
+        Path to search in for files
+    filename_str_contains : str
+        String value to search for in the name
+
+    Returns
+    -------
+    List with string values of all the matched filenames
+    """
     all_files = sorted([f for f in listdir(path) if isfile(join(path, f))])
     filenames = [s for s in all_files if filename_str_contains in s]
     return filenames
