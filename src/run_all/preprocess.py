@@ -11,7 +11,7 @@ from sklearn.impute import SimpleImputer
 # Custom functions and settings
 import src.settings as settings
 from src.run_all.get_data import get_data, get_data_predict
-from src.preprocess.preprocess import make_df_missing
+from src.preprocess.preprocess_utils import make_df_missing
 from src.utilities.transformers import ColumnSelector, GroupInterpolateImputer, RelativeColumnScaler, \
     CustomScaler, CustomImputer
 
@@ -107,9 +107,9 @@ def preprocess_data_predict(df_get_data=pd.DataFrame(),
     ## Merge dataframes
     # Get data (if DataFrame is empty)
     if df_get_data.empty:
-        df_get_data = get_data(save=True, personal_note="empty_df")
+        df_get_data = get_data(save_all=save_all, personal_note="empty_df")
     if df_get_data_predict.empty:
-        df_get_data_predict = get_data_predict(save_all=True, personal_note="empty_df")
+        df_get_data_predict = get_data_predict(save_all=save_all, personal_note="empty_df")
     # Reset index
     df_get_data = df_get_data.reset_index().copy()
     df_get_data_predict = df_get_data_predict.reset_index().copy()

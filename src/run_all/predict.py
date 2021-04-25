@@ -39,10 +39,10 @@ def predict_data(trained_model,
     # Preprocess predict
     df_preprocessed_predict = preprocess_data_predict(df_get_data=df_get_data,
                                                       df_get_data_predict=df_get_data_predict,
-                                                      save_all=True, personal_note=personal_note)
+                                                      save_all=save_all, personal_note=personal_note)
     # Preprocess (general)
     df_preprocessed = preprocess_data(df=df_preprocessed_predict,
-                                      save_all=True, personal_note=personal_note)
+                                      save_all=save_all, personal_note=personal_note)
 
     ## Predict
     # Drop TARGET-values, only necessary in train

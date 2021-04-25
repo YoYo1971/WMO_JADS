@@ -7,7 +7,7 @@ from datetime import datetime
 
 # Custom functions and settings
 import src.settings as settings
-from src.preprocess.preprocess import get_and_combine_cbs_tables, rename_and_subset_cols, \
+from src.preprocess.preprocess_utils import get_and_combine_cbs_tables, rename_and_subset_cols, \
     get_region_period_spec_val_subtable, downcast_variables_dataframe
 
 
