@@ -579,6 +579,37 @@ preprocess = {
 
 ## Train settings
 """
+Y_VALUE : list(str)
+    Column name of the target value in a list
+TEST_SIZE : float
+    Test size used to split the dataset in a train and test set.
+RANDOM_STATE : int
+    Random state parameter for sklearn.model_selection.train_test_split.
+CROSS_VALIDATE : int
+    Way of cross validation in the models. I.e. 10 of RepeatedKFold(n_splits=30, n_repeats=5, random_state=1)
+MODEL_SCORING : str
+    Scoring metric as a string value
+GRIDSEARCH_ALPHA : list(float)
+    Ridge setting: Regularization strength. Regularization improves the conditioning of the problem and reduces the 
+    variance of the estimates.
+GRIDSEARCH_NEIGHBORS : list(int)
+    KNeighborsRegressor setting. Number of neighbors to use by default for kneighbors queries.
+GRIDSEARCH_NORMALIZE : list(bool)
+    Linear regression setting. This parameter is ignored when fit_intercept is set to False. If True, the regressors 
+    X will be normalized before regression by subtracting the mean and dividing by the l2-norm. 
+GRIDSEARCH_KERNEL : list(str)
+    SVR setting. Specifies the kernel type to be used in the algorithm. It must be one of ‘linear’, ‘poly’, ‘rbf’, 
+    ‘sigmoid’, ‘precomputed’ or a callable.
+GRIDSEARCH_GAMMA : list(float)
+    XGBRegressor setting. Minimum loss reduction required to make a further partition on a leaf node of the tree. 
+    The larger gamma is, the more conservative the algorithm will be.
+GRIDSEARCH_N_ESTIMATORS : list(int)
+    XGBRegressor setting. Number of gradient boosted trees
+GRIDSEARCH_C_REGULARIZATION : list(float)
+    SVR setting. Regularization parameter. The strength of the regularization is inversely proportional to C. 
+    Must be strictly positive. The penalty is a squared l2 penalty.
+FILENAME_MODEL : str
+    String value of the prefix in the filename of this step.
 LOG_PATH : str
     Path of saving logging files. Default: '../../data/log_train/',
 """
@@ -593,8 +624,8 @@ train = {
     'GRIDSEARCH_NORMALIZE': [True, False],
     'GRIDSEARCH_KERNEL': ['linear', 'poly', 'rbf', 'sigmoid', 'precomputed'],
     'GRIDSEARCH_GAMMA': [0.5, 1, 1.5, 2, 5],
-    'GRIDSEARCH_N_ESTIMATORS': [50,100,200],
-    'GRIDSEARCH_C_REGULARIZATION': [0.001, 0.01, 0,1, 1],
+    'GRIDSEARCH_N_ESTIMATORS': [50, 100, 200],
+    'GRIDSEARCH_C_REGULARIZATION': [0.001, 0.01, 0, 1, 1],
     'FILENAME_MODEL': 'best_model_',
     'LOG_PATH': '../../data/log_train/'
 }
