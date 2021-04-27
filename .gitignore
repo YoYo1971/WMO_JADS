@@ -12,6 +12,7 @@
 !data/log_get_data/*.csv
 !data/log_preprocess/*.csv
 !data/log_train/*.csv
+!data/log_predict/*.csv
 
 
 #img
