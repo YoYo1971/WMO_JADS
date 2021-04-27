@@ -7,17 +7,17 @@
 # Data
 !*/data/df_WMO_WIJK_HUISHOUDENS_BEVOLKING_HEFFING_202104040949.parquet.gzip
 !data/*.parquet.gzip
+!data/*.pickle
 *.csv
 !data/log_get_data/*.csv
 !data/log_preprocess/*.csv
 !data/log_train/*.csv
+!data/log_predict/*.csv
 
 
 #img
 img/
 
-# Model
-*.pickle
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
