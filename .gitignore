@@ -14,10 +14,12 @@
 !data/log_train/*.csv
 !data/log_predict/*.csv
 
-
 #img
-img/
-
+img/202103232000/*.jpeg
+img/202103282056/*.jpeg
+img/202103282200/*.jpeg
+img/202103290950/*.jpeg
+!img/PROCESSFLOW.jpg
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

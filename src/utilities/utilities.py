@@ -5,7 +5,7 @@ import pickle
 
 def get_latest_file(filename_str_contains, datapath='../data/', filetype='parquet'):
     """
-    Method to get the latest file to preprare
+    Method to get the latest file to given a certain string value.
 
     Parameters
     ----------
