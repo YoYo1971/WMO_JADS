@@ -87,7 +87,7 @@ def preprocess_data_predict(df_get_data=pd.DataFrame(),
                             df_get_data_predict=pd.DataFrame(),
                             save_all=False, personal_note=""):
     """
-    Method to preprocess the data (select columns, impute, scale).
+    Method to preprocess the historical and prognosed data (select columns, impute, scale).
 
     Parameters
     ----------

@@ -18,7 +18,7 @@ from src.train.train_utils import drop_nan_from_specific_columns, split_clf_and_
 
 def train_and_fit_models(df_preprocessed, filename_input, param_grid=[], save_all=False, personal_note=""):
     """
-    Method to train model(s) on a preprocessed dataset.
+    Method to train model(s) on a preprocessed dataset and return the gridsearch object.
 
     Parameters
     ----------
