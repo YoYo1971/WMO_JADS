@@ -15,5 +15,5 @@ Members of project group:
 In this repository there
 
 ## Procesflow
-![Schematic processflow](../img/PROCESSFLOW.jpg?raw=true "Schematic procesflow")
+![Schematic processflow](/img/PROCESSFLOW.jpg?raw=true "Schematic procesflow")
 
