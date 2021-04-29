@@ -70,7 +70,7 @@ def predict_data(trained_model,
                                'settings': [settings.predict],
                                'personal_note': [personal_note]})
         df_log.to_csv(settings.predict['LOG_PATH'] + filename + '_' + personal_note + '.csv')
-        df_preprocessed_predict.to_parquet(settings.DATAPATH + filename + '_' + personal_note + '.parquet.gzip',
+        df_preds.to_parquet(settings.DATAPATH + filename + '_' + personal_note + '.parquet.gzip',
                                    compression='gzip')
 
     return df_preds
