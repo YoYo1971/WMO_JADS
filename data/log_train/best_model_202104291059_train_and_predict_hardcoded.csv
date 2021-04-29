@@ -1,0 +1,6 @@
+Model,Gridsearch_Params,Train_RMSE,Test_RMSE,Number_of_features,Y_value,Input_filename,Output_filename
+XGBRegressor,"base_score=0.5, booster='gbtree', colsample_bylevel=1,
+             colsample_bynode=1, colsample_bytree=1, gamma=1, gpu_id=-1,
+             importance_type='gain', interaction_constraints='',
+             learning_rate=0.300000012, max_delta_step=0, max_depth=6,
+             min_child_weight=1, missing=nan, monotone_constraints='",5.438133123097392,5.439500768211023,9,wmoclientenper1000inwoners,train_and_predict_hardcoded,best_model_202104291059_train_and_predict_hardcoded
